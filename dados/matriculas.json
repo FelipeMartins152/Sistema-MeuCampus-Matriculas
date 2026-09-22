@@ -4,41 +4,47 @@
     "alunoId": 1,
     "turmaId": 1,
     "dataMatricula": "2026-09-20",
-    "situacao": "ATIVA"
+    "situacao": "ATIVA",
+    "isAtivo": true
   },
   {
     "id": 2,
     "alunoId": 2,
     "turmaId": 2,
     "dataMatricula": "2026-09-10",
-    "situacao": "TRANCADA"
+    "situacao": "TRANCADA",
+    "isAtivo": true
   },
   {
     "id": 3,
     "alunoId": 3,
     "turmaId": 1,
     "dataMatricula": "2026-09-19",
-    "situacao": "ATIVA"
+    "situacao": "ATIVA",
+    "isAtivo": true
   },
   {
     "id": 4,
     "alunoId": 4,
     "turmaId": 2,
     "dataMatricula": "2026-09-17",
-    "situacao": "ATIVA"
+    "situacao": "ATIVA",
+    "isAtivo": true
   },
   {
     "id": 5,
     "alunoId": 5,
     "turmaId": 1,
     "dataMatricula": "2026-09-15",
-    "situacao": "TRANCADA"
+    "situacao": "TRANCADA",
+    "isAtivo": false
   },
   {
     "id": 6,
     "alunoId": 5,
     "turmaId": 2,
     "dataMatricula": "2026-09-16",
-    "situacao": "ATIVA"
+    "situacao": "ATIVA",
+    "isAtivo": true
   }
 ]
