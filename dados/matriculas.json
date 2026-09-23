@@ -1,50 +1,44 @@
 [
   {
     "id": 1,
-    "alunoId": 1,
-    "turmaId": 1,
-    "dataMatricula": "2026-09-20",
-    "situacao": "ATIVA",
-    "isAtivo": true
+    "aluno_id": 1,
+    "turma_id": 1,
+    "data_matricula": "2026-09-20",
+    "situacao": "ATIVA"
   },
   {
     "id": 2,
-    "alunoId": 2,
-    "turmaId": 2,
-    "dataMatricula": "2026-09-10",
-    "situacao": "TRANCADA",
-    "isAtivo": true
+    "aluno_id": 2,
+    "turma_id": 2,
+    "data_matricula": "2026-09-10",
+    "situacao": "TRANCADA"
   },
   {
     "id": 3,
-    "alunoId": 3,
-    "turmaId": 1,
-    "dataMatricula": "2026-09-19",
-    "situacao": "ATIVA",
-    "isAtivo": true
+    "aluno_id": 3,
+    "turma_id": 1,
+    "data_matricula": "2026-09-19",
+    "situacao": "ATIVA"
   },
   {
     "id": 4,
-    "alunoId": 4,
-    "turmaId": 2,
-    "dataMatricula": "2026-09-17",
-    "situacao": "ATIVA",
-    "isAtivo": true
+    "aluno_id": 4,
+    "turma_id": 2,
+    "data_matricula": "2026-09-17",
+    "situacao": "ATIVA"
   },
   {
     "id": 5,
-    "alunoId": 5,
-    "turmaId": 1,
-    "dataMatricula": "2026-09-15",
-    "situacao": "TRANCADA",
-    "isAtivo": false
+    "aluno_id": 5,
+    "turma_id": 1,
+    "data_matricula": "2026-09-15",
+    "situacao": "TRANCADA"
   },
   {
     "id": 6,
-    "alunoId": 5,
-    "turmaId": 2,
-    "dataMatricula": "2026-09-16",
-    "situacao": "ATIVA",
-    "isAtivo": true
+    "aluno_id": 5,
+    "turma_id": 2,
+    "data_matricula": "2026-09-16",
+    "situacao": "ATIVA"
   }
 ]

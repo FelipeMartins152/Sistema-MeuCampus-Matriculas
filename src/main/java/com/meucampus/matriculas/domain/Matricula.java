@@ -12,13 +12,14 @@ import java.time.LocalDate;
 public class Matricula {
     private Long id;
 
-    @JsonProperty("alunoId")
+    @JsonProperty("aluno_id")
     private Long alunoId;
 
-    @JsonProperty("turmaId")
+    @JsonProperty("turma_id")
     private Long turmaId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("data_matricula")
     private LocalDate dataMatricula;
 
     private Situacao situacao;
