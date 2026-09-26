@@ -70,7 +70,7 @@ public class MatriculaRepository {
                 .findFirst();
     }
 
-    public Optional<Matricula> atualizar(Matricula matricula){
+    public synchronized Optional<Matricula> atualizar(Matricula matricula){
         Optional<Matricula> existente = matriculas.stream()
                 .filter(m -> m.getId().equals(matricula.getId()))
                 .findFirst();
@@ -84,7 +84,7 @@ public class MatriculaRepository {
         return Optional.of(matricula);
     }
 
-    public Matricula cadastrar(Matricula matricula){
+    public synchronized Matricula cadastrar(Matricula matricula){
         matricula.setId(proximoId);
         matriculas.add(matricula);
         gravar();
@@ -92,7 +92,7 @@ public class MatriculaRepository {
         return matricula;
     }
 
-    public boolean remover(long id){
+    public synchronized boolean remover(long id){
         boolean removeu = matriculas.removeIf(m -> m.getId().equals(id));
         if(removeu)
             gravar();
