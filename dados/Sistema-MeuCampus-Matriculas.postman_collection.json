@@ -1,0 +1,107 @@
+{
+  "info": {
+    "_postman_id": "b23c00cb-3842-4a70-b249-cb1f22cb783f",
+    "name": "Sistema-MeuCampus-Matriculas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53773873",
+    "_collection_link": "https://go.postman.co/collection/53773873-b23c00cb-3842-4a70-b249-cb1f22cb783f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Listar todas as matrículas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/matriculas?aluno_id=1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "matriculas"
+          ],
+          "query": [
+            {
+              "key": "aluno_id",
+              "value": "1",
+              "description": "Lista todas as matrículas do aluno com o ID solicitado.",
+              "type": "text"
+            },
+            {
+              "key": "turma_id",
+              "value": "1",
+              "description": "Lista todas as matrículas da turma com o ID solicitado.",
+              "type": "text",
+              "disabled": true
+            },
+            {
+              "key": "situacao",
+              "value": "",
+              "description": "Lista todas as matrículas com a situação solicitada.",
+              "type": "text",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar matrícula por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/matriculas/:id",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "matriculas",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "7",
+              "description": "ID da matrícula que se deseja buscar."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cadastrar matrícula",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"aluno_id\": 1,\r\n    \"turma_id\": 2,\r\n    \"data_matricula\": \"2026-09-28\",\r\n    \"situacao\": \"ATIVA\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8083/matriculas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "matriculas"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

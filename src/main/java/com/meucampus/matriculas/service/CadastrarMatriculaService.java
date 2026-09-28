@@ -20,6 +20,9 @@ public class CadastrarMatriculaService {
     }
 
     public Matricula executar(Matricula matricula) {
+        if (matricula.getSituacao() != null && matricula.getSituacao() != SituacaoMatricula.ATIVA) {
+            throw new IllegalArgumentException("Uma matrícula não pode ser criada como TRANCADA.");
+        }
 
         matricula.setSituacao(SituacaoMatricula.ATIVA);
 
