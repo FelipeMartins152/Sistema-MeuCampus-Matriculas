@@ -37,7 +37,7 @@ public class MatriculaUnicaValidator {
 
         if (jaExisteAtiva) {
 
-            throw new RegraNegocioException("O aluno já possui uma matrícula ATIVA nesta turma.");
+            throw new RegraNegocioException("O aluno já possui uma matrícula ativa nesta turma.");
 
         }
 
