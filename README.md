@@ -12,7 +12,7 @@ O domain `Matricula` usa as seguintes anotações do Jackson para controlar como
 
 ## O que cada integrante desenvolveu
 
-- **Carolina Pinheiro**:
+- **Carolina Pinheiro**: camada web, tratamento global de exceções e documentação do projeto. Foi responsável pela criação do `MatriculaController`, mapeando os 5 endpoints REST (`GET`, `POST`, `PUT`, `DELETE`), o suporte a filtros via query string (`aluno_id`, `turma_id`, `situacao`), a validação das requisições com `@Valid` e a devolução dos códigos de status HTTP adequados (`200`, `201`, `204`, `404`). Desenvolveu também o `GlobalExceptionHandler` (`@RestControllerAdvice`) para captura centralizada e formatação estruturada em JSON de erros de validação e regras de negócio, além da elaboração e estruturação da documentação no `README.md`.
 
 - **Felipe Martins**: camada de acesso a dados (`MatriculaRepository`), implementando as operações de listar, buscar, cadastrar, atualizar e remover, e o controle de concorrência com `synchronized`, além da configuração das anotações do Jackson no domain `Matricula`, responsáveis pela leitura e gravação do arquivo `dados/matriculas.json`.
 
