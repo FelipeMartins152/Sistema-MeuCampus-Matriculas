@@ -26,7 +26,7 @@ public class Matricula {
     private Long turmaId;
 
     @NotNull(message = "É necessário informar a data da matrícula.")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("data_matricula")
     private LocalDate dataMatricula;
 

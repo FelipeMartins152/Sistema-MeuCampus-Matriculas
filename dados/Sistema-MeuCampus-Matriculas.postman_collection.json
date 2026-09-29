@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "8b222c71-76bf-4ebf-98d4-a6d02738d18b",
+    "_postman_id": "7f1c8426-7512-4bc0-948e-488d8d8833de",
     "name": "Sistema-MeuCampus-Matriculas",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53222404",
-    "_collection_link": "https://go.postman.co/collection/53222404-8b222c71-76bf-4ebf-98d4-a6d02738d18b?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/53222404-7f1c8426-7512-4bc0-948e-488d8d8833de?source=collection_link"
   },
   "item": [
     {
@@ -107,7 +107,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"aluno_id\": 10,\r\n    \"turma_id\": 2,\r\n    \"data_matricula\": \"28/09/2026\",\r\n    \"situacao\": \"ATIVA\"\r\n}",
+          "raw": "{\r\n    \"aluno_id\": 10,\r\n    \"turma_id\": 2,\r\n    \"data_matricula\": \"2026-09-28\",\r\n    \"situacao\": \"ATIVA\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -135,7 +135,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"aluno_id\": 1,\r\n    \"turma_id\": 2,\r\n    \"data_matricula\": \"28/09/2026\",\r\n    \"situacao\": \"TRANCADA\"\r\n}",
+          "raw": "{\r\n    \"aluno_id\": 1,\r\n    \"turma_id\": 2,\r\n    \"data_matricula\": \"2026-09-28\",\r\n    \"situacao\": \"TRANCADA\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
