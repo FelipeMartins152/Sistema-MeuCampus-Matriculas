@@ -1,6 +1,7 @@
 package com.meucampus.matriculas.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class Matricula {
 
     private Long id;
@@ -26,7 +26,7 @@ public class Matricula {
     private Long turmaId;
 
     @NotNull(message = "É necessário informar a data da matrícula.")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @JsonProperty("data_matricula")
     private LocalDate dataMatricula;
 

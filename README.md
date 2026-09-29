@@ -6,15 +6,15 @@ O domain `Matricula` usa as seguintes anotações do Jackson para controlar como
 
 - **`@JsonProperty`** nos campos `alunoId`, `turmaId` e `dataMatricula`: usado para converter os nomes dos campos de 'camelCase' (padrão no Java) para 'snake_case' (`aluno_id`, `turma_id`, `data_matricula`) na representação em JSON, tanto nas requisições quanto nas respostas da API e no arquivo de dados. Tendo em vista que 'snake_case' foi a convenção de nomenclatura escolhida para o JSON deste serviço.
 
-- **`@JsonIgnoreProperties(ignoreUnknown = true)`** na classe: usado para que a leitura fique tolerante a campos extras não mapeados no domain, evitando que o serviço quebre caso o JSON (do arquivo de dados ou de alguma requisição) tenha algum campo desconhecido pela classe.
+- **`@JsonFormat`** no campo `dataMatricula`: usado para fixar o formato de leitura e escrita da data como `dd/MM/yyyy`, em vez do formato ISO (`yyyy-MM-dd`) que o Jackson usaria por padrão em um projeto Spring Boot. Essa escolha foi feita para seguir o formato de data mais usual no Brasil.
 
-- **`@JsonFormat`** no campo `dataMatricula`: usado para deixar evidente o formato de leitura e escrita da data como `yyyy-MM-dd`, mesmo sendo o formato padrão utilizado para LocalDate pelo Jackson.
+- **`@JsonIgnoreProperties(ignoreUnknown = true)`** na classe: usado para que a leitura fique tolerante a campos extras não mapeados no domain, evitando que o serviço quebre caso o JSON (do arquivo de dados ou de alguma requisição) tenha algum campo desconhecido pela classe. É mantido por boa prática, para que fique configurado na classe, não dependendo da configuração que o Spring Boot já faz para o Jackson para ignorar campos extras.
 
 ## O que cada integrante desenvolveu
 
 - **Carolina Pinheiro**:
 
-- **Felipe Martins**: camada de acesso a dados (`MatriculaRepository`) e configuração das anotações do Jackson no domain `Matricula`, responsáveis pela leitura e gravação do arquivo `dados/matriculas.json`.
+- **Felipe Martins**: camada de acesso a dados (`MatriculaRepository`), implementando as operações de listar, buscar, cadastrar, atualizar e remover, e o controle de concorrência com `synchronized`, além da configuração das anotações do Jackson no domain `Matricula`, responsáveis pela leitura e gravação do arquivo `dados/matriculas.json`.
 
 - **Ricardo Bitencourt**: modelo de domínio e regras de negócio. Foram feitos `Matricula`, o enum `SituacaoMatricula`, os serviços de cadastro, atualização, busca, exclusão e listagem, além da validação que impede duas matrículas ativas para o mesmo aluno na mesma turma. A listagem permite filtrar por `alunoId`, `turmaId` e `situacao`.
 

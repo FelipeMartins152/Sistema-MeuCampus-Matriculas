@@ -52,18 +52,6 @@ public class MatriculaRepository {
         return new ArrayList<>(matriculas);
     }
 
-    public List<Matricula> buscarPorIdAluno(long alunoId){
-        return matriculas.stream()
-                .filter(m -> m.getAlunoId().equals(alunoId))
-                .toList();
-    }
-
-    public List<Matricula> buscarPorIdTurma(long turmaId){
-        return matriculas.stream()
-                .filter(m -> m.getTurmaId().equals(turmaId))
-                .toList();
-    }
-
     public Optional<Matricula> buscarPorId(long id){
         return matriculas.stream()
                 .filter(m -> m.getId().equals(id))
