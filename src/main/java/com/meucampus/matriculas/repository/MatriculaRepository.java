@@ -1,89 +1,35 @@
 package com.meucampus.matriculas.repository;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meucampus.matriculas.domain.Matricula;
-import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Repository;
+import com.meucampus.matriculas.domain.SituacaoMatricula;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class MatriculaRepository {
+public interface MatriculaRepository extends JpaRepository<Matricula, Long> {
 
-    private static final File ARQUIVO_MATRICULAS = new File ("dados/matriculas.json");
-    private final ObjectMapper objectMapper;
-    private final List<Matricula> matriculas = new ArrayList<>();
-    private long proximoId = 1;
+    Optional<Matricula> findById(Long id);
 
-    public MatriculaRepository(ObjectMapper objectMapper){
-        this.objectMapper = objectMapper;
-    }
+    Page<Matricula> findAll(Pageable pageable);
 
-    @PostConstruct
-    private void carregar(){
-        try{
-            if(!ARQUIVO_MATRICULAS.exists()){
-                ARQUIVO_MATRICULAS.getParentFile().mkdirs();
-                objectMapper.writeValue(ARQUIVO_MATRICULAS, List.of());
-            }
+    List<Matricula> findByAlunoId(Long alunoId);
 
-            matriculas.addAll(objectMapper.readValue(ARQUIVO_MATRICULAS, new TypeReference<List<Matricula>>() {}));
-            proximoId = matriculas.stream().mapToLong(Matricula::getId).max().orElse(0) + 1;
-        }catch(IOException e){
-            throw new UncheckedIOException("Erro ao ler arquivo de matrículas", e);
-        }
-    }
+    List<Matricula> findByTurmaId(Long turmaId);
 
-    private void gravar(){
-        try{
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(ARQUIVO_MATRICULAS, matriculas);
-        }catch(IOException e){
-            throw new UncheckedIOException("Erro ao gravar no arquivo de matrículas", e);
-        }
-    }
+    List<Matricula> findBySituacao(SituacaoMatricula situacao);
 
-    public List<Matricula> listar(){
-        return new ArrayList<>(matriculas);
-    }
+    List<Matricula> findByAlunoIdAndSituacao(Long alunoId, SituacaoMatricula situacao);
 
-    public Optional<Matricula> buscarPorId(long id){
-        return matriculas.stream()
-                .filter(m -> m.getId().equals(id))
-                .findFirst();
-    }
+    List<Matricula> findByTurmaIdAndSituacao(Long turmaId, SituacaoMatricula situacao);
 
-    public synchronized Optional<Matricula> atualizar(Matricula matricula){
-        Optional<Matricula> existente = matriculas.stream()
-                .filter(m -> m.getId().equals(matricula.getId()))
-                .findFirst();
+    List<Matricula> findByAlunoIdAndTurmaId(Long alunoId, Long turmaId);
 
-        if(existente.isEmpty())
-            return Optional.empty();
+    List<Matricula> findByAlunoIdAndTurmaIdAndSituacao(Long alunoId, Long turmaId, SituacaoMatricula situacao);
 
-        matriculas.remove(existente.get());
-        matriculas.add(matricula);
-        gravar();
-        return Optional.of(matricula);
-    }
+    boolean existsByAlunoIdAndTurmaIdAndSituacao(Long alunoId, Long turmaId, SituacaoMatricula situacao);
 
-    public synchronized Matricula cadastrar(Matricula matricula){
-        matricula.setId(proximoId);
-        matriculas.add(matricula);
-        gravar();
-        proximoId ++;
-        return matricula;
-    }
-
-    public synchronized boolean remover(long id){
-        boolean removeu = matriculas.removeIf(m -> m.getId().equals(id));
-        if(removeu)
-            gravar();
-        return removeu;
-    }
+    long countByTurmaIdAndSituacao(Long turmaId, SituacaoMatricula situacao);
 }
