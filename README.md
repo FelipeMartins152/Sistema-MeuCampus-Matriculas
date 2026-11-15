@@ -1,5 +1,11 @@
 # Sistema MeuCampus - Serviço de Matrículas
 
+## Sumário
+* [Trabalho 01](#1-trabalho-01)
+* [Trabalho 02](#2-trabalho-02)
+
+## 1. Trabalho 01
+
 Serviço REST responsável por cadastrar, consultar, alterar e remover matrículas de alunos em turmas. Os dados são persistidos em um arquivo JSON (`dados/matriculas.json`), sem uso de banco de dados.
 
 ## Tecnologias utilizadas
@@ -160,3 +166,36 @@ O controller deve chamar os serviços, sem acessar o repositório diretamente:
 - `ExcluirMatriculaService.executar(id)` retorna `false` se não encontrou a matrícula.
 - `RegraNegocioException` indica tentativa de criar ou atualizar uma matrícula ativa duplicada e deve ser convertida em resposta HTTP de erro pelo `RestControllerAdvice`.
 - O controller deve validar o corpo das requisições com `@Valid` e deixar o repositório exclusivamente para os serviços.
+
+
+
+## 2. Trabalho 02
+
+## Informações do Banco de Dados
+
+- Banco de Dados: H2 Database
+- Acesso ao H2 console: `http://localhost:8083/h2-console`
+- Saved Settings: `Generic H2 (Embedded)`
+- Saved Name: `Generic H2 (Embedded)`
+- Driver Class: `org.h2.Driver`
+- JDBC URL: `jdbc:h2:file:./banco/matriculas`
+- User Name: `sa`
+- Password: Deixar em branco
+
+## Anotações do Jackson utilizadas
+
+O Jackson é a biblioteca que converte objetos Java em JSON (serialização) e JSON em objetos Java (desserialização). O domain `Matricula` usa as seguintes anotações do Jackson para controlar como os dados são representados em JSON:
+
+- **`@JsonProperty`** nos campos `alunoId`, `turmaId` e `dataMatricula`: usado para converter os nomes dos campos de 'camelCase' (padrão no Java) para 'snake_case' (`aluno_id`, `turma_id`, `data_matricula`) na representação em JSON, tanto nas requisições quanto nas respostas da API e no arquivo de dados. Tendo em vista que 'snake_case' foi a convenção de nomenclatura escolhida para o JSON deste serviço.
+
+- **`@JsonFormat`** no campo `dataMatricula`: usado para fixar o formato de leitura e escrita da data como `yyyy-MM-dd`, de acordo com o formato ISO 8601. Como o JSON não possui um tipo nativo para data, toda data trafega como String e para evitar erros, como confundir dia e mês, é utilizado esse padrão de formato. Mesmo o Spring Boot já configurando o Jackson para escrever datas no formato ISO, a anotação deixa essa convenção explícita e garantida diretamente na classe `Matricula`, não dependendo de uma configuração global do projeto, que pode ser alterada em algum momento para outra situação e deixar o formato errado.
+
+- **`@JsonIgnoreProperties(ignoreUnknown = true)`** na classe: usado para que a leitura fique tolerante a campos extras não mapeados no domain, evitando que o serviço quebre caso o JSON (do arquivo de dados ou de alguma requisição) tenha algum campo desconhecido pela classe. É mantido por boa prática, para que fique configurado na classe, não dependendo da configuração que o Spring Boot já faz para o Jackson para ignorar campos extras.
+
+## O que cada integrante desenvolveu
+
+- **Carolina Pinheiro**:
+
+- **Felipe Martins**: Atualização do `MatriculaRepository` para ser uma interface que utiliza o Spring Data JPA para fazer o mapeamento objeto-relacional. Atualização do domain `Matricula` para ser uma entidade com `@Entity`, `@Id`, `@GenerateValue` e `@Enumerated(EnumType.STRING)`. Configuração do banco de dados H2 e criação da classe `RegistrosDeExemplo`, responsável por criar alguns registros no banco ao inicializar a aplicação, caso nenhum dado tenha sido gravado ainda. 
+
+- **Ricardo Bitencourt**: 
