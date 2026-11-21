@@ -6,12 +6,11 @@ import com.meucampus.matriculas.domain.Matricula;
 import com.meucampus.matriculas.domain.SituacaoMatricula;
 import com.meucampus.matriculas.dto.TurmaDTO;
 import com.meucampus.matriculas.exception.RegraNegocioException;
+import com.meucampus.matriculas.exception.RecursoNaoEncontradoException;
 import com.meucampus.matriculas.exception.ServicoIndisponivelException;
 import com.meucampus.matriculas.repository.MatriculaRepository;
 import com.meucampus.matriculas.service.validator.MatriculaUnicaValidator;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AtualizarMatriculaService {
@@ -32,13 +31,11 @@ public class AtualizarMatriculaService {
         this.turmasClient = turmasClient;
     }
 
-    public Optional<Matricula> executar(long id, Matricula matriculaAtualizada) {
+    public Matricula executar(long id, Matricula matriculaAtualizada) {
 
-        Optional<Matricula> existente = matriculaRepository.findById(id);
-
-        if (existente.isEmpty()) {
-            return Optional.empty();
-        }
+        Matricula existente = matriculaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Matrícula com ID " + id + " não foi encontrada."));
 
         matriculaAtualizada.setId(id);
 
@@ -48,7 +45,7 @@ public class AtualizarMatriculaService {
             matriculaUnicaValidator.validarDuplicidade(matriculaAtualizada);
 
             boolean estaSendoReativada =
-                    existente.get().getSituacao() == SituacaoMatricula.TRANCADA;
+                    existente.getSituacao() == SituacaoMatricula.TRANCADA;
 
             if (estaSendoReativada) {
                 if (turma.getVagas() == null) {
@@ -67,7 +64,7 @@ public class AtualizarMatriculaService {
             }
         }
 
-        return Optional.of(matriculaRepository.save(matriculaAtualizada));
+        return matriculaRepository.save(matriculaAtualizada);
         
     }
 

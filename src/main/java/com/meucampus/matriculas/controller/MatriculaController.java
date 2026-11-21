@@ -3,7 +3,13 @@ package com.meucampus.matriculas.controller;
 import com.meucampus.matriculas.domain.Matricula;
 import com.meucampus.matriculas.domain.SituacaoMatricula;
 import com.meucampus.matriculas.dto.MatriculaDetalhesDTO;
+import com.meucampus.matriculas.exception.RecursoNaoEncontradoException;
 import com.meucampus.matriculas.service.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/matriculas")
+@Tag(name = "Matrículas", description = "Operações sobre matrículas")
 public class MatriculaController {
 
     private final CadastrarMatriculaService cadastrarMatriculaService;
@@ -35,9 +42,17 @@ public class MatriculaController {
     }
 
     @GetMapping
+    @Operation(summary = "Lista matrículas com filtros e paginação")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Página de matrículas encontrada"),
+            @ApiResponse(responseCode = "400", description = "Situação ou parâmetro inválido")
+    })
     public ResponseEntity<Page<Matricula>> listar(
+            @Parameter(description = "ID do aluno")
             @RequestParam(name = "alunoId", required = false) Long alunoId,
+            @Parameter(description = "ID da turma")
             @RequestParam(name = "turmaId", required = false) Long turmaId,
+            @Parameter(description = "Situação: ATIVA ou TRANCADA")
             @RequestParam(required = false) String situacao, Pageable pageable) {
 
         SituacaoMatricula situacaoConvertida = null;
@@ -59,36 +74,64 @@ public class MatriculaController {
     }
 
     @GetMapping("/{id}/detalhes")
+    @Operation(summary = "Consulta os dados compostos de uma matrícula")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Detalhes encontrados"),
+            @ApiResponse(responseCode = "404", description = "Matrícula não encontrada"),
+            @ApiResponse(responseCode = "503", description = "Cadastro ou Turmas indisponível")
+    })
     public ResponseEntity<MatriculaDetalhesDTO> buscarDetalhes(@PathVariable Long id) {
         return ResponseEntity.ok(buscarMatriculaPorIdService.buscarDetalhes(id));
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Busca uma matrícula pelo ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Matrícula encontrada"),
+            @ApiResponse(responseCode = "404", description = "Matrícula não encontrada")
+    })
     public ResponseEntity<Matricula> buscarPorId(@PathVariable long id) {
-        return buscarMatriculaPorIdService.executar(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Matricula matricula = buscarMatriculaPorIdService.executar(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "A matrícula " + id + " não foi encontrada."));
+        return ResponseEntity.ok(matricula);
     }
 
     @PostMapping
+    @Operation(summary = "Cadastra uma matrícula ativa")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Matrícula cadastrada"),
+            @ApiResponse(responseCode = "400", description = "Aluno ou turma inexistente"),
+            @ApiResponse(responseCode = "409", description = "Matrícula duplicada ou turma lotada"),
+            @ApiResponse(responseCode = "503", description = "Cadastro ou Turmas indisponível")
+    })
     public ResponseEntity<Matricula> criar(@Valid @RequestBody Matricula matricula) {
         Matricula novaMatricula = cadastrarMatriculaService.executar(matricula);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novaMatricula); // HTTP 201 Created
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaMatricula);
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza ou reativa uma matrícula")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Matrícula atualizada"),
+            @ApiResponse(responseCode = "400", description = "Aluno ou turma inexistente"),
+            @ApiResponse(responseCode = "404", description = "Matrícula não encontrada"),
+            @ApiResponse(responseCode = "409", description = "Matrícula duplicada ou turma lotada"),
+            @ApiResponse(responseCode = "503", description = "Cadastro ou Turmas indisponível")
+    })
     public ResponseEntity<Matricula> atualizar(@PathVariable long id, @Valid @RequestBody Matricula matricula) {
-        return atualizarMatriculaService.executar(id, matricula)
-                .map(ResponseEntity::ok) 
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(atualizarMatriculaService.executar(id, matricula));
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Remove uma matrícula trancada")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Matrícula removida"),
+            @ApiResponse(responseCode = "404", description = "Matrícula não encontrada"),
+            @ApiResponse(responseCode = "409", description = "Só é possível excluir matrículas trancadas")
+    })
     public ResponseEntity<Void> deletar(@PathVariable long id) {
-        boolean removido = excluirMatriculaService.executar(id);
-        if (removido) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        excluirMatriculaService.executar(id);
+        return ResponseEntity.noContent().build();
     }
 }

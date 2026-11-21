@@ -182,6 +182,119 @@ O controller deve chamar os serviços, sem acessar o repositório diretamente:
 - User Name: `sa`
 - Password: Deixar em branco
 
+Os dados são mantidos no arquivo `banco/matriculas.mv.db` e continuam disponíveis depois de reiniciar o serviço. Nenhum dado de aluno ou turma é copiado para esse banco.
+
+## Configuração dos serviços externos
+
+Os endereços dos outros serviços são configurados em `application.properties`:
+
+```properties
+servicos.cadastro.url=http://localhost:8081
+servicos.turmas.url=http://localhost:8082
+servicos.http.connect-timeout=3000
+servicos.http.read-timeout=3000
+```
+
+Não devem existir URLs externas fixas no código Java.
+
+## Comunicação HTTP implementada
+
+### Serviço de Cadastro
+
+O `CadastroClient` consulta:
+
+```text
+GET http://localhost:8081/alunos/{id}
+```
+
+Essa chamada confirma que o aluno existe ao cadastrar uma matrícula, ao atualizar uma matrícula ativa ou reativar uma matrícula trancada.
+
+### Serviço de Turmas
+
+O `TurmasClient` consulta:
+
+```text
+GET http://localhost:8082/turmas/{id}
+```
+
+Essa chamada confirma que a turma existe e fornece o número de vagas da turma.
+
+Os dados recebidos são representados pelos DTOs `AlunoDTO` e `TurmaDTO`. Os dados externos não são gravados no banco de Matrículas.
+
+## Endpoint de consulta composta
+
+Foi acrescentado o endpoint:
+
+```text
+GET /matriculas/{id}/detalhes
+```
+
+Ele reúne os dados locais da matrícula com:
+
+- o nome do aluno, obtido no serviço de Cadastro;
+- o código e o nome da disciplina da turma, obtidos no serviço de Turmas.
+
+Os dados externos são buscados no momento da requisição e não são persistidos.
+
+## Listagem e filtros
+
+A listagem principal continua em `GET /matriculas`, agora com paginação e os filtros combinados:
+
+```text
+GET /matriculas?alunoId=1
+GET /matriculas?turmaId=2
+GET /matriculas?situacao=ativa
+GET /matriculas?turmaId=2&situacao=ATIVA
+GET /matriculas?alunoId=1&turmaId=2&situacao=ativa&page=0&size=10
+```
+
+Os filtros são enviados ao `MatriculaRepository` por consultas derivadas com `Pageable`. A situação aceita `ATIVA` ou `ativa`, independentemente das letras maiúsculas ou minúsculas.
+
+## Regras de integridade da integração
+
+1. Ao cadastrar ou reativar uma matrícula ativa, o sistema consulta o aluno no serviço de Cadastro.
+2. Ao cadastrar ou reativar uma matrícula ativa, o sistema consulta a turma no serviço de Turmas.
+3. Um `404` recebido dos serviços externos é traduzido para `400` no serviço de Matrículas.
+4. Não é permitido cadastrar outra matrícula ativa para o mesmo aluno na mesma turma.
+5. Uma nova matrícula ativa só é aceita quando existem vagas na turma.
+6. Ao reativar uma matrícula trancada, o sistema compara o total de vagas com a quantidade de matrículas ativas locais.
+7. Uma turma lotada devolve `409 Conflict`.
+8. Falha de conexão, timeout ou serviço externo indisponível devolve `503 Service Unavailable`.
+
+## Tratamento de erros
+
+As respostas são centralizadas em `@RestControllerAdvice`.
+
+| Código | Quando ocorre |
+|---:|---|
+| `400` | aluno ou turma inexistente, JSON inválido, campo inválido ou situação inválida |
+| `404` | matrícula local inexistente |
+| `409` | matrícula ativa duplicada, turma lotada ou exclusão inválida |
+| `503` | Cadastro ou Turmas fora do ar ou não responder dentro do timeout |
+
+Exemplo:
+
+```json
+{
+  "timestamp": "2026-11-21T16:52:11",
+  "status": 503,
+  "error": "Service Unavailable",
+  "message": "O serviço de Cadastro está fora do ar ou não respondeu a tempo."
+}
+```
+
+## Documentação OpenAPI
+
+A documentação foi configurada com `springdoc-openapi` na linha 2.8.x.
+
+Após iniciar o serviço, ela fica disponível em:
+
+```text
+http://localhost:8083/swagger-ui/index.html
+```
+
+A documentação deve listar os filtros, o endpoint `/detalhes` e as respostas `400`, `404`, `409` e `503`.
+
 ## Anotações do Jackson utilizadas
 
 O Jackson é a biblioteca que converte objetos Java em JSON (serialização) e JSON em objetos Java (desserialização). O domain `Matricula` usa as seguintes anotações do Jackson para controlar como os dados são representados em JSON:
@@ -198,4 +311,4 @@ O Jackson é a biblioteca que converte objetos Java em JSON (serialização) e J
 
 - **Felipe Martins**: Atualização do `MatriculaRepository` para ser uma interface que utiliza o Spring Data JPA para fazer o mapeamento objeto-relacional. Atualização do domain `Matricula` para ser uma entidade com `@Entity`, `@Id`, `@GenerateValue` e `@Enumerated(EnumType.STRING)`. Configuração do banco de dados H2 e criação da classe `RegistrosDeExemplo`, responsável por criar alguns registros no banco ao inicializar a aplicação, caso nenhum dado tenha sido gravado ainda. 
 
-- **Ricardo Bitencourt**: 
+- **Ricardo Bitencourt**: Implementação da comunicação HTTP com os serviços de Cadastro e Turmas utilizando `RestClient`. Configuração das URLs externas e dos timeouts em `application.properties`, criação dos DTOs `AlunoDTO`, `TurmaDTO` e `MatriculaDetalhesDTO`, tradução de respostas remotas `404` e de falhas de conexão, aplicação das regras de integridade no cadastro e na atualização, controle de vagas e duplicidade ativa, além da implementação da consulta composta que retorna os detalhes da matrícula com os dados do aluno e da turma.

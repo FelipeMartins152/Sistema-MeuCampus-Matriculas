@@ -18,24 +18,27 @@ public class MatriculaUnicaValidator {
     }
 
     public void validarDuplicidade(Matricula matricula) {
-
         if (matricula == null || matricula.getAlunoId() == null || matricula.getTurmaId() == null) {
             return;
-
         }
 
-        boolean jaExisteAtiva = repository.findByAlunoIdAndTurmaIdAndSituacao(
-                matricula.getAlunoId(),
-                matricula.getTurmaId(),
-                SituacaoMatricula.ATIVA).stream()
-                .anyMatch(existing -> !existing.getId().equals(matricula.getId()));
+        boolean jaExisteAtiva;
+
+        if (matricula.getId() == null) {
+            jaExisteAtiva = repository.existsByAlunoIdAndTurmaIdAndSituacao(
+                    matricula.getAlunoId(),
+                    matricula.getTurmaId(),
+                    SituacaoMatricula.ATIVA);
+        } else {
+            jaExisteAtiva = repository.existsByAlunoIdAndTurmaIdAndSituacaoAndIdNot(
+                    matricula.getAlunoId(),
+                    matricula.getTurmaId(),
+                    SituacaoMatricula.ATIVA,
+                    matricula.getId());
+        }
 
         if (jaExisteAtiva) {
-
             throw new RegraNegocioException("O aluno já possui uma matrícula ativa nesta turma.");
-
         }
-
     }
-
 }

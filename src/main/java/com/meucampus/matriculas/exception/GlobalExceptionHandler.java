@@ -2,9 +2,11 @@ package com.meucampus.matriculas.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -44,6 +46,21 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Erro de validação dos campos.");
 
+        return criarResposta(HttpStatus.BAD_REQUEST, mensagem);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex) {
+        return criarResposta(
+                HttpStatus.BAD_REQUEST,
+                "Corpo da requisição inválido ou malformado.");
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, Object>> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex) {
+        String mensagem = "Parâmetro inválido: " + ex.getName();
         return criarResposta(HttpStatus.BAD_REQUEST, mensagem);
     }
 
