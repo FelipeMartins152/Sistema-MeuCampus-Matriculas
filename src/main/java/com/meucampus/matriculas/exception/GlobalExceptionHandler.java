@@ -13,44 +13,60 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RecursoRemotoNaoEncontradoException.class)
+    public ResponseEntity<Map<String, Object>> handleRecursoRemotoNaoEncontrado(
+            RecursoRemotoNaoEncontradoException ex) {
+        return criarResposta(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage());
+    }
+
+    @ExceptionHandler(ServicoIndisponivelException.class)
+    public ResponseEntity<Map<String, Object>> handleServicoIndisponivel(
+            ServicoIndisponivelException ex) {
+        return criarResposta(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                ex.getMessage());
+    }
+
+    @ExceptionHandler(RecursoNaoEncontradoException.class)
+    public ResponseEntity<Map<String, Object>> handleRecursoNaoEncontrado(
+            RecursoNaoEncontradoException ex) {
+        return criarResposta(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage());
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Bad Request");
-
         String mensagem = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .findFirst()
                 .orElse("Erro de validação dos campos.");
 
-        body.put("message", mensagem);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        return criarResposta(HttpStatus.BAD_REQUEST, mensagem);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Bad Request");
-        body.put("message", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        return criarResposta(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(RegraNegocioException.class)
     public ResponseEntity<Map<String, Object>> handleRegraNegocioException(RegraNegocioException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT.value());
-        body.put("error", "Conflict");
-        body.put("message", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        return criarResposta(HttpStatus.CONFLICT, ex.getMessage());
     }
 
+    private ResponseEntity<Map<String, Object>> criarResposta(
+            HttpStatus status,
+            String mensagem) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", mensagem);
+
+        return ResponseEntity.status(status).body(body);
+    }
+    
 }
