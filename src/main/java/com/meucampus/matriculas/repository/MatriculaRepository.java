@@ -7,29 +7,27 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MatriculaRepository extends JpaRepository<Matricula, Long> {
 
-    Optional<Matricula> findById(Long id);
+    Page<Matricula> findByAlunoId(Long alunoId, Pageable pageable);
 
-    Page<Matricula> findAll(Pageable pageable);
+    Page<Matricula> findByTurmaId(Long turmaId, Pageable pageable);
 
-    List<Matricula> findByAlunoId(Long alunoId);
+    Page<Matricula> findBySituacao(SituacaoMatricula situacao, Pageable pageable);
 
-    List<Matricula> findByTurmaId(Long turmaId);
+    Page<Matricula> findByAlunoIdAndSituacao(Long alunoId, SituacaoMatricula situacao, Pageable pageable);
 
-    List<Matricula> findBySituacao(SituacaoMatricula situacao);
+    Page<Matricula> findByTurmaIdAndSituacao(Long turmaId, SituacaoMatricula situacao, Pageable pageable);
 
-    List<Matricula> findByAlunoIdAndSituacao(Long alunoId, SituacaoMatricula situacao);
+    Page<Matricula> findByAlunoIdAndTurmaId(Long alunoId, Long turmaId, Pageable pageable);
 
-    List<Matricula> findByTurmaIdAndSituacao(Long turmaId, SituacaoMatricula situacao);
-
-    List<Matricula> findByAlunoIdAndTurmaId(Long alunoId, Long turmaId);
+    Page<Matricula> findByAlunoIdAndTurmaIdAndSituacao(Long alunoId, Long turmaId, SituacaoMatricula situacao, Pageable pageable);
 
     List<Matricula> findByAlunoIdAndTurmaIdAndSituacao(Long alunoId, Long turmaId, SituacaoMatricula situacao);
 
     boolean existsByAlunoIdAndTurmaIdAndSituacao(Long alunoId, Long turmaId, SituacaoMatricula situacao);
 
     long countByTurmaIdAndSituacao(Long turmaId, SituacaoMatricula situacao);
+    
 }

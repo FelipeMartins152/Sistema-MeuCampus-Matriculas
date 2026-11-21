@@ -18,7 +18,7 @@ public class ExcluirMatriculaService {
     }
 
     public boolean executar(long id) {
-        Matricula matricula = matriculaRepository.buscarPorId(id)
+        Matricula matricula = matriculaRepository.findById(id)
                 .orElse(null);
 
         if (matricula == null) {
@@ -29,7 +29,8 @@ public class ExcluirMatriculaService {
             throw new RegraNegocioException("Só é possível excluir matrículas trancadas.");
         }
 
-        return matriculaRepository.remover(id);
+        matriculaRepository.deleteById(id);
+        return true;
     }
 
 }

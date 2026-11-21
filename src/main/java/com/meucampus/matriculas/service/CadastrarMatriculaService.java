@@ -28,7 +28,7 @@ public class CadastrarMatriculaService {
 
         matriculaUnicaValidator.validarDuplicidade(matricula);
 
-        return matriculaRepository.cadastrar(matricula);
+        return matriculaRepository.save(matricula);
 
     }
     

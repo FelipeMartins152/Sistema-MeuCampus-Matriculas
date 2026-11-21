@@ -23,7 +23,7 @@ public class AtualizarMatriculaService {
 
     public Optional<Matricula> executar(long id, Matricula matriculaAtualizada) {
 
-        Optional<Matricula> existente = matriculaRepository.buscarPorId(id);
+        Optional<Matricula> existente = matriculaRepository.findById(id);
 
         if (existente.isEmpty()) {
 
@@ -39,7 +39,7 @@ public class AtualizarMatriculaService {
 
         }
 
-        return matriculaRepository.atualizar(matriculaAtualizada);
+        return Optional.of(matriculaRepository.save(matriculaAtualizada));
         
     }
 }

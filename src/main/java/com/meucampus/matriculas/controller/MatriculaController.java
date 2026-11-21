@@ -4,11 +4,11 @@ import com.meucampus.matriculas.domain.Matricula;
 import com.meucampus.matriculas.domain.SituacaoMatricula;
 import com.meucampus.matriculas.service.*;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/matriculas")
@@ -34,12 +34,13 @@ public class MatriculaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Matricula>> listar(
-            @RequestParam(name = "aluno_id", required = false) Long alunoId,
-            @RequestParam(name = "turma_id", required = false) Long turmaId,
-            @RequestParam(required = false) SituacaoMatricula situacao) {
+    public ResponseEntity<Page<Matricula>> listar(
+            @RequestParam(name = "alunoId", required = false) Long alunoId,
+            @RequestParam(name = "turmaId", required = false) Long turmaId,
+            @RequestParam(required = false) SituacaoMatricula situacao,
+            Pageable pageable) {
 
-        List<Matricula> matriculas = listarMatriculasService.executar(alunoId, turmaId, situacao);
+        Page<Matricula> matriculas = listarMatriculasService.executar(alunoId, turmaId, situacao, pageable);
         return ResponseEntity.ok(matriculas);
     }
 

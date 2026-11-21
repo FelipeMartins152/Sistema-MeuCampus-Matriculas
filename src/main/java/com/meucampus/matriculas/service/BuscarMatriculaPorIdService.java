@@ -19,7 +19,7 @@ public class BuscarMatriculaPorIdService {
 
     public Optional<Matricula> executar(long id) {
 
-        return matriculaRepository.buscarPorId(id);
+        return matriculaRepository.findById(id);
 
     }
 
