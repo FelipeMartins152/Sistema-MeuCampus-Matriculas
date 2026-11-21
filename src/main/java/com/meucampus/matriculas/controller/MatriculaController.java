@@ -2,6 +2,7 @@ package com.meucampus.matriculas.controller;
 
 import com.meucampus.matriculas.domain.Matricula;
 import com.meucampus.matriculas.domain.SituacaoMatricula;
+import com.meucampus.matriculas.dto.MatriculaDetalhesDTO;
 import com.meucampus.matriculas.service.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -37,13 +38,30 @@ public class MatriculaController {
     public ResponseEntity<Page<Matricula>> listar(
             @RequestParam(name = "alunoId", required = false) Long alunoId,
             @RequestParam(name = "turmaId", required = false) Long turmaId,
-            @RequestParam(required = false) SituacaoMatricula situacao,
-            Pageable pageable) {
+            @RequestParam(required = false) String situacao, Pageable pageable) {
 
-        Page<Matricula> matriculas = listarMatriculasService.executar(alunoId, turmaId, situacao, pageable);
+        SituacaoMatricula situacaoConvertida = null;
+        if (situacao != null && !situacao.isBlank()) {
+            try {
+                situacaoConvertida = SituacaoMatricula.valueOf(situacao.trim().toUpperCase());
+            } catch (IllegalArgumentException exception) {
+                throw new IllegalArgumentException(
+                        "Situação inválida. Use ATIVA ou TRANCADA.");
+            }
+        }
+
+        Page<Matricula> matriculas = listarMatriculasService.executar(
+                alunoId,
+                turmaId,
+                situacaoConvertida,
+                pageable);
         return ResponseEntity.ok(matriculas);
     }
 
+    @GetMapping("/{id}/detalhes")
+    public ResponseEntity<MatriculaDetalhesDTO> buscarDetalhes(@PathVariable Long id) {
+        return ResponseEntity.ok(buscarMatriculaPorIdService.buscarDetalhes(id));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Matricula> buscarPorId(@PathVariable long id) {
