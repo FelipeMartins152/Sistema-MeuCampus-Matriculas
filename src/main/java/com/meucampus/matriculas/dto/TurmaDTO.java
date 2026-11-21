@@ -15,6 +15,8 @@ public class TurmaDTO {
 
     private Long id;
     private String codigo;
+
+    @JsonAlias("nomeDisciplina")
     private String nome;
 
     @JsonAlias({"vagas", "quantidadeVagas", "numeroVagas"})
