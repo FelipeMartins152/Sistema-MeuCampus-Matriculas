@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.data.mapping.PropertyReferenceException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -73,6 +74,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleRegraNegocioException(RegraNegocioException ex) {
         return criarResposta(HttpStatus.CONFLICT, ex.getMessage());
     }
+
+@ExceptionHandler(PropertyReferenceException.class)
+public ResponseEntity<Map<String, Object>> handlePropertyReference(PropertyReferenceException ex) {
+    return criarResposta(HttpStatus.BAD_REQUEST,
+            "Campo de ordenação inválido: " + ex.getPropertyName());
+}
 
     private ResponseEntity<Map<String, Object>> criarResposta(
             HttpStatus status,
