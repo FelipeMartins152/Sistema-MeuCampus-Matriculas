@@ -7,6 +7,7 @@ import com.meucampus.matriculas.exception.RecursoNaoEncontradoException;
 import com.meucampus.matriculas.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springdoc.core.annotations.ParameterObject;
 
 @RestController
 @RequestMapping("/matriculas")
@@ -47,13 +49,16 @@ public class MatriculaController {
             @ApiResponse(responseCode = "200", description = "Página de matrículas encontrada"),
             @ApiResponse(responseCode = "400", description = "Situação ou parâmetro inválido")
     })
-    public ResponseEntity<Page<Matricula>> listar(
-            @Parameter(description = "ID do aluno")
-            @RequestParam(name = "alunoId", required = false) Long alunoId,
-            @Parameter(description = "ID da turma")
-            @RequestParam(name = "turmaId", required = false) Long turmaId,
-            @Parameter(description = "Situação: ATIVA ou TRANCADA")
-            @RequestParam(required = false) String situacao, Pageable pageable) {
+
+public ResponseEntity<Page<Matricula>> listar(
+        @Parameter(description = "ID do aluno")
+        @RequestParam(name = "alunoId", required = false) Long alunoId,
+        @Parameter(description = "ID da turma")
+        @RequestParam(name = "turmaId", required = false) Long turmaId,
+        @Parameter(description = "Situação (ATIVA ou TRANCADA, maiúscula ou minúscula)",
+                   schema = @Schema(allowableValues = {"ATIVA", "TRANCADA", "ativa", "trancada"}))
+        @RequestParam(required = false) String situacao,
+        @ParameterObject Pageable pageable) {
 
         SituacaoMatricula situacaoConvertida = null;
         if (situacao != null && !situacao.isBlank()) {
