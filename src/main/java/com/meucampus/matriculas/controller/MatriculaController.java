@@ -81,10 +81,11 @@ public ResponseEntity<Page<Matricula>> listar(
     @GetMapping("/{id}/detalhes")
     @Operation(summary = "Consulta os dados compostos de uma matrícula")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Detalhes encontrados"),
-            @ApiResponse(responseCode = "404", description = "Matrícula não encontrada"),
-            @ApiResponse(responseCode = "503", description = "Cadastro ou Turmas indisponível")
-    })
+        @ApiResponse(responseCode = "200", description = "Detalhes encontrados"),
+        @ApiResponse(responseCode = "400", description = "Aluno ou turma não existe mais no serviço externo"),
+        @ApiResponse(responseCode = "404", description = "Matrícula não encontrada"),
+        @ApiResponse(responseCode = "503", description = "Cadastro ou Turmas indisponível")
+})
     public ResponseEntity<MatriculaDetalhesDTO> buscarDetalhes(@PathVariable Long id) {
         return ResponseEntity.ok(buscarMatriculaPorIdService.buscarDetalhes(id));
     }
