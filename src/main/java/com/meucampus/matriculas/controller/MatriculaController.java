@@ -52,9 +52,9 @@ public class MatriculaController {
 
     public ResponseEntity<Page<Matricula>> listar(
         @Parameter(description = "ID do aluno")
-        @RequestParam(name = "aluno_id", required = false) Long alunoId,
+        @RequestParam(name = "alunoId", required = false) Long alunoId,
         @Parameter(description = "ID da turma")
-        @RequestParam(name = "turma_id", required = false) Long turmaId,
+        @RequestParam(name = "turmaId", required = false) Long turmaId,
         @Parameter(description = "Situação (ATIVA ou TRANCADA, maiúscula ou minúscula)",
                    schema = @Schema(allowableValues = {"ATIVA", "TRANCADA", "ativa", "trancada"}))
         @RequestParam(required = false) String situacao,

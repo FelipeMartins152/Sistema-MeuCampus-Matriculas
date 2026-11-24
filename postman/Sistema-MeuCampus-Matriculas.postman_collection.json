@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "61f28594-d5cc-469d-a679-6f9979efee07",
+    "_postman_id": "7328a1ac-cecc-44c4-87a7-cf250b9da1a4",
     "name": "Sistema-MeuCampus-Matriculas",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53222404",
-    "_collection_link": "https://go.postman.co/collection/53222404-61f28594-d5cc-469d-a679-6f9979efee07?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/53222404-7328a1ac-cecc-44c4-87a7-cf250b9da1a4?source=collection_link"
   },
   "item": [
     {
@@ -24,15 +24,20 @@
           ],
           "query": [
             {
-              "key": "aluno_id",
+              "key": "alunoId",
               "value": "1",
               "description": "Lista todas as matrículas do aluno com o ID solicitado.",
               "disabled": true
             },
             {
-              "key": "turma_id",
+              "key": "turmaId",
               "value": "1",
               "description": "Lista todas as matrículas da turma com o ID solicitado.",
+              "disabled": true
+            },
+            {
+              "key": "situacao",
+              "value": "",
               "disabled": true
             }
           ]
