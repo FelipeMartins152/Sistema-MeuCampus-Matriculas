@@ -184,6 +184,20 @@ O controller deve chamar os serviços, sem acessar o repositório diretamente:
 
 Os dados são mantidos no arquivo `banco/matriculas.mv.db` e continuam disponíveis depois de reiniciar o serviço. Nenhum dado de aluno ou turma é copiado para esse banco.
 
+## Entidades e tabelas
+
+Tabela `MATRICULA`, gerada pelo JPA a partir da entidade `Matricula`:
+
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `id` | `BIGINT` (PK) | Gerado automaticamente (`IDENTITY`) |
+| `aluno_id` | `BIGINT` | ID do aluno no serviço de Cadastro, sem chave estrangeira |
+| `turma_id` | `BIGINT` | ID da turma no serviço de Turmas, sem chave estrangeira |
+| `data_matricula` | `DATE` | Formato `yyyy-MM-dd` |
+| `situacao` | `VARCHAR` | `ATIVA` ou `TRANCADA`, mapeada com `EnumType.STRING` |
+
+`aluno_id` e `turma_id` são valores numéricos simples: os registros de alunos e turmas pertencem aos bancos dos respectivos serviços.
+
 ## Configuração dos serviços externos
 
 Os endereços dos outros serviços são configurados em `application.properties`:
@@ -250,6 +264,23 @@ GET /matriculas?alunoId=1&turmaId=2&situacao=ativa&page=0&size=10
 
 Os filtros são enviados ao `MatriculaRepository` por consultas derivadas com `Pageable`. A situação aceita `ATIVA` ou `ativa`, independentemente das letras maiúsculas ou minúsculas.
 
+Parâmetros de paginação:
+
+- `page`: número da página, começando em `0`;
+- `size`: quantidade de resultados por página;
+- `sort`: campo e direção, por exemplo `sort=dataMatricula,desc`.
+
+## Resumo dos endpoints
+
+| Método | Rota | Descrição | Sucesso |
+|---|---|---|---:|
+| `GET` | `/matriculas` | Lista matrículas com filtros combinados e paginação | `200` |
+| `GET` | `/matriculas/{id}` | Busca matrícula pelo ID | `200` |
+| `GET` | `/matriculas/{id}/detalhes` | Matrícula com nome do aluno e código/nome da disciplina | `200` |
+| `POST` | `/matriculas` | Cadastra matrícula após validar aluno, turma e vagas | `201` |
+| `PUT` | `/matriculas/{id}` | Atualiza ou reativa matrícula | `200` |
+| `DELETE` | `/matriculas/{id}` | Remove matrícula trancada | `204` |
+
 ## Regras de integridade da integração
 
 1. Ao cadastrar ou reativar uma matrícula ativa, o sistema consulta o aluno no serviço de Cadastro.
@@ -295,6 +326,40 @@ http://localhost:8083/swagger-ui/index.html
 
 A documentação deve listar os filtros, o endpoint `/detalhes` e as respostas `400`, `404`, `409` e `503`.
 
+## Como subir os três serviços juntos
+
+1. Abra um terminal para cada serviço, na pasta raiz do respectivo projeto.
+2. No projeto de Turmas, inicie o PostgreSQL definido no `docker-compose.yml`:
+
+   ```bash
+   docker compose up -d
+   ```
+
+3. Inicie as três aplicações Java:
+
+   ```bash
+   ./mvnw spring-boot:run       # Linux/macOS
+   mvnw.cmd spring-boot:run     # Windows
+   ```
+
+   Cadastro usa a porta `8081`, Turmas usa `8082` e Matrículas usa `8083`. O PostgreSQL do projeto de Turmas usa a porta `5432`; Matrículas mantém seu banco H2 local.
+
+4. Confirme que os serviços estão acessíveis:
+
+   ```text
+   GET http://localhost:8081/alunos/1
+   GET http://localhost:8082/turmas/1
+   GET http://localhost:8083/matriculas
+   ```
+
+5. Teste a consulta composta:
+
+   ```text
+   GET http://localhost:8083/matriculas/1/detalhes
+   ```
+
+6. Para verificar o retorno `503`, pare Cadastro ou Turmas e repita a consulta de detalhes ou tente cadastrar uma matrícula.
+
 ## Anotações do Jackson utilizadas
 
 O Jackson é a biblioteca que converte objetos Java em JSON (serialização) e JSON em objetos Java (desserialização). O domain `Matricula` usa as seguintes anotações do Jackson para controlar como os dados são representados em JSON:
@@ -307,7 +372,7 @@ O Jackson é a biblioteca que converte objetos Java em JSON (serialização) e J
 
 ## O que cada integrante desenvolveu
 
-- **Carolina Pinheiro**:
+- **Carolina Pinheiro**: Responsável pela camada web. Criou o endpoint `GET /matriculas/{id}/detalhes` e evoluiu `GET /matriculas` para usar `Pageable` e filtros combinados (`alunoId`, `turmaId` e `situacao`), aceitando a situação em maiúsculas ou minúsculas. Expandiu o `GlobalExceptionHandler` para devolver JSON estruturado nos status `400`, `404`, `409` e `503`. Configurou o `springdoc-openapi` 2.8.x, documentou endpoints e respostas de erro no Swagger UI e atualizou o `README.md`.
 
 - **Felipe Martins**: Atualização do `MatriculaRepository` para ser uma interface que utiliza o Spring Data JPA para fazer o mapeamento objeto-relacional. Atualização do domain `Matricula` para ser uma entidade com `@Entity`, `@Id`, `@GenerateValue` e `@Enumerated(EnumType.STRING)`. Configuração do banco de dados H2 e criação da classe `RegistrosDeExemplo`, responsável por criar alguns registros no banco ao inicializar a aplicação, caso nenhum dado tenha sido gravado ainda. 
 
