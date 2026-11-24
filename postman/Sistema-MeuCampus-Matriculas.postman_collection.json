@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "317d362e-05a7-4de5-bb9c-48ea6c07b006",
+    "_postman_id": "61f28594-d5cc-469d-a679-6f9979efee07",
     "name": "Sistema-MeuCampus-Matriculas",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53773873",
-    "_collection_link": "https://go.postman.co/collection/53773873-317d362e-05a7-4de5-bb9c-48ea6c07b006?source=collection_link"
+    "_exporter_id": "53222404",
+    "_collection_link": "https://go.postman.co/collection/53222404-61f28594-d5cc-469d-a679-6f9979efee07?source=collection_link"
   },
   "item": [
     {
@@ -34,12 +34,6 @@
               "value": "1",
               "description": "Lista todas as matrículas da turma com o ID solicitado.",
               "disabled": true
-            },
-            {
-              "key": "situacao",
-              "value": "",
-              "description": "Lista todas as matrículas com a situação solicitada.",
-              "disabled": true
             }
           ]
         }
@@ -67,6 +61,33 @@
               "key": "id",
               "value": "7",
               "description": "ID da matrícula que se deseja buscar."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar detalhes da matrícula por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/matriculas/:id/detalhes",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "matriculas",
+            ":id",
+            "detalhes"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "1"
             }
           ]
         }
@@ -135,7 +156,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"aluno_id\": 1,\r\n    \"turma_id\": 2,\r\n    \"data_matricula\": \"2026-09-28\",\r\n    \"situacao\": \"TRANCADA\"\r\n}",
+          "raw": "{\r\n    \"aluno_id\": 10,\r\n    \"turma_id\": 2,\r\n    \"data_matricula\": \"2026-09-28\",\r\n    \"situacao\": \"TRANCADA\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -156,7 +177,7 @@
           "variable": [
             {
               "key": "id",
-              "value": "7"
+              "value": "12"
             }
           ]
         }
